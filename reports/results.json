@@ -1,0 +1,178 @@
+{
+  "n_test_samples": 13371,
+  "n_cloudy": 9468,
+  "test_days": 20,
+  "all": {
+    "persistence": {
+      "rmse_kw": 3.747483730316162,
+      "mae_kw": 2.147895097732544,
+      "mbe_kw": -0.007580519653856754,
+      "nrmse_pct": 12.450112060851037,
+      "skill_pct": -3.1736860885243523
+    },
+    "smart_persistence": {
+      "rmse_kw": 3.632208824157715,
+      "mae_kw": 1.7915030717849731,
+      "mbe_kw": -0.10363639891147614,
+      "nrmse_pct": 12.067138950690081,
+      "skill_pct": 0.0
+    },
+    "gbm_history": {
+      "rmse_kw": 3.3729477680426676,
+      "mae_kw": 1.8341786281283727,
+      "mbe_kw": 0.4532484743366197,
+      "nrmse_pct": 11.205806538347732,
+      "skill_pct": 7.137834542736354
+    },
+    "gbm_weather": {
+      "rmse_kw": 3.3821457713204763,
+      "mae_kw": 1.874381940377473,
+      "mbe_kw": 0.23729219566733345,
+      "nrmse_pct": 11.236364688772346,
+      "skill_pct": 6.884600113684991
+    },
+    "cnn_image": {
+      "rmse_kw": 2.8921103477478027,
+      "mae_kw": 1.567267656326294,
+      "mbe_kw": 0.08916863054037094,
+      "nrmse_pct": 9.608340025740208,
+      "skill_pct": 20.37598916360587
+    },
+    "fusion": {
+      "rmse_kw": 2.914228677749634,
+      "mae_kw": 1.580839991569519,
+      "mbe_kw": -0.06853031367063522,
+      "nrmse_pct": 9.681822849666556,
+      "skill_pct": 19.767039318687186
+    },
+    "fusion (camera offline)": {
+      "rmse_kw": 3.146869659423828,
+      "mae_kw": 1.8170714378356934,
+      "mbe_kw": 0.1903609037399292,
+      "nrmse_pct": 10.454716476491123,
+      "skill_pct": 13.362094203007002
+    }
+  },
+  "cloudy": {
+    "persistence": {
+      "rmse_kw": 4.218639850616455,
+      "mae_kw": 2.5905282497406006,
+      "mbe_kw": -0.24634170532226562,
+      "nrmse_pct": 14.015414786101179,
+      "skill_pct": -2.465375732170272
+    },
+    "smart_persistence": {
+      "rmse_kw": 4.1171369552612305,
+      "mae_kw": 2.2838685512542725,
+      "mbe_kw": -0.2717454433441162,
+      "nrmse_pct": 13.67819586465525,
+      "skill_pct": 0.0
+    },
+    "gbm_history": {
+      "rmse_kw": 3.7739063798178396,
+      "mae_kw": 2.188838401677353,
+      "mbe_kw": 0.7489529801654691,
+      "nrmse_pct": 12.537894949560929,
+      "skill_pct": 8.336632450489201
+    },
+    "gbm_weather": {
+      "rmse_kw": 3.7834689782301107,
+      "mae_kw": 2.2213752090818653,
+      "mbe_kw": 0.5356507785976133,
+      "nrmse_pct": 12.56966437950203,
+      "skill_pct": 8.104369144308643
+    },
+    "cnn_image": {
+      "rmse_kw": 3.257922887802124,
+      "mae_kw": 1.8946775197982788,
+      "mbe_kw": 0.2295781373977661,
+      "nrmse_pct": 10.823664079076824,
+      "skill_pct": 20.86921267851265
+    },
+    "fusion": {
+      "rmse_kw": 3.2794907093048096,
+      "mae_kw": 1.8854026794433594,
+      "mbe_kw": 0.05299936980009079,
+      "nrmse_pct": 10.895317971112323,
+      "skill_pct": 20.34535783139312
+    },
+    "fusion (camera offline)": {
+      "rmse_kw": 3.53448486328125,
+      "mae_kw": 2.1622018814086914,
+      "mbe_kw": 0.4249674081802368,
+      "nrmse_pct": 11.74247462884136,
+      "skill_pct": 14.151875400584323
+    }
+  },
+  "inference_ms_per_sample_cpu": {
+    "gbm_history": 0.024839610509977284,
+    "gbm_weather": 0.02293260066655996,
+    "cnn_image": 2.2606190814191636,
+    "fusion": 2.16372517174999
+  },
+  "train": {
+    "horizon": 15,
+    "stride": 2,
+    "cs_scale": 0.6098461530549089,
+    "cs_gamma": 0.556594230833925,
+    "cols_all": [
+      "pv_lag15",
+      "pv_lag10",
+      "pv_lag5",
+      "pv_lag0",
+      "k_lag15",
+      "k_lag10",
+      "k_lag5",
+      "k_lag0",
+      "k_std",
+      "k_trend",
+      "pvcs_now",
+      "pvcs_target",
+      "cos_zen_target",
+      "sin_az_target",
+      "cos_az_target",
+      "sin_hod",
+      "cos_hod",
+      "sin_doy",
+      "cos_doy",
+      "w_shortwave_radiation",
+      "w_direct_radiation",
+      "w_diffuse_radiation",
+      "w_cloud_cover",
+      "w_cloud_cover_low",
+      "w_cloud_cover_mid",
+      "w_cloud_cover_high",
+      "w_temperature_2m",
+      "w_relative_humidity_2m",
+      "w_wind_speed_10m",
+      "w_sw_ratio"
+    ],
+    "cols_hist": [
+      "pv_lag15",
+      "pv_lag10",
+      "pv_lag5",
+      "pv_lag0",
+      "k_lag15",
+      "k_lag10",
+      "k_lag5",
+      "k_lag0",
+      "k_std",
+      "k_trend",
+      "pvcs_now",
+      "pvcs_target",
+      "cos_zen_target",
+      "sin_az_target",
+      "cos_az_target",
+      "sin_hod",
+      "cos_hod",
+      "sin_doy",
+      "cos_doy"
+    ],
+    "train_days": 64,
+    "val_days": 16,
+    "n_train": 21829,
+    "n_val": 5405,
+    "cnn_image_train_s": 715,
+    "fusion_train_s": 670
+  }
+}
