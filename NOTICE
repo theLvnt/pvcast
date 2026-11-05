@@ -1,0 +1,18 @@
+pvcast — multimodal short-term PV power forecasting
+Copyright 2026 Levent Yavuz
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This software uses, but does not redistribute, the following third-party data:
+
+* SKIPP'D — SKy Images and Photovoltaic Power Generation Dataset
+  Nie Y., Li X., Scott A., Sun Y., Venugopal V., Brandt A. "SKIPP'D: A SKy Images and
+  Photovoltaic Power Generation Dataset for short-term solar forecasting."
+  Solar Energy 255 (2023) 171-179.  https://huggingface.co/datasets/torchgeo/skippd
+  License: CC BY 4.0
+
+* Open-Meteo Historical Weather API (ERA5-based)  https://open-meteo.com
+  License: CC BY 4.0 — "Weather data by Open-Meteo.com"
+
+Trained model files in models/ are derived from the datasets above and are
+provided under CC BY 4.0 attribution terms for the underlying data.
