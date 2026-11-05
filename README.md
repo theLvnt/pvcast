@@ -16,7 +16,43 @@ plus deterministic solar geometry and a clear-sky PV reference. Everything is re
 
 Held-out test set of the [SKIPP'D](https://huggingface.co/datasets/torchgeo/skippd) benchmark (Stanford, 30.1 kW array). Skill is relative to **smart persistence** (clouds persist, the sun moves), the standard reference in solar forecasting — positive skill means better than the reference.
 
-<!-- RESULTS -->
+Held-out test: 20 days, 13371 samples (1-min issue times); cloudy subset: 9468 samples. Training: 64 days (+16 validation days).
+
+**All test samples**
+
+| Model | RMSE (kW) | MAE (kW) | nRMSE (%) | Skill vs smart persistence (%) |
+|---|---|---|---|---|
+| persistence | 3.747 | 2.148 | 12.45 | -3.2 |
+| smart_persistence | 3.632 | 1.792 | 12.07 | 0.0 |
+| gbm_history | 3.373 | 1.834 | 11.21 | 7.1 |
+| gbm_weather | 3.382 | 1.874 | 11.24 | 6.9 |
+| cnn_image | 2.892 | 1.567 | 9.61 | 20.4 |
+| fusion | 2.914 | 1.581 | 9.68 | 19.8 |
+| fusion (camera offline) | 3.147 | 1.817 | 10.45 | 13.4 |
+
+**Cloudy / variable conditions (k* < 0.8 or 15-min k* std > 0.05)**
+
+| Model | RMSE (kW) | MAE (kW) | nRMSE (%) | Skill vs smart persistence (%) |
+|---|---|---|---|---|
+| persistence | 4.219 | 2.591 | 14.02 | -2.5 |
+| smart_persistence | 4.117 | 2.284 | 13.68 | 0.0 |
+| gbm_history | 3.774 | 2.189 | 12.54 | 8.3 |
+| gbm_weather | 3.783 | 2.221 | 12.57 | 8.1 |
+| cnn_image | 3.258 | 1.895 | 10.82 | 20.9 |
+| fusion | 3.279 | 1.885 | 10.90 | 20.3 |
+| fusion (camera offline) | 3.534 | 2.162 | 11.74 | 14.2 |
+
+Inference (CPU, ms/sample): gbm_history 0.03, gbm_weather 0.02, cnn_image 2.26, fusion 2.16
+
+![Forecast skill](reports/skill.png)
+
+**Reading the results**
+
+* Sky images carry most of the 15-minute signal: the image CNN beats smart persistence by about **20 %** on all samples and on cloudy/variable conditions alike, versus about 7–8 % for gradient boosting on PV history.
+* In this setup, adding hourly weather does **not** improve on images + PV history (fusion ≈ image CNN). Hourly reanalysis is too coarse for 15-minute cloud dynamics; its value is expected at longer horizons (hours ahead) or with a real NWP forecast.
+* With the camera offline, the fusion net (trained with modality dropout) still keeps **~13 % skill**, better than both GBM baselines — a practical fallback.
+* All numbers come from a CPU-scale run (64 training + 16 validation days, 8 epochs). Full results are in [`reports/results.md`](reports/results.md).
+
 
 ## How it works
 
