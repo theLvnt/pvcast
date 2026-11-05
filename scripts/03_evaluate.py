@@ -20,7 +20,7 @@ sys.path.insert(0, str(ROOT))
 
 import torch  # noqa: E402
 
-from pvcast.data.skippd import load_subset, safe_load_object_npy  # noqa: E402
+from pvcast.data.skippd import load_subset  # noqa: E402
 from pvcast.data.weather import load_weather  # noqa: E402
 from pvcast.evaluation import report, to_markdown  # noqa: E402
 from pvcast.features import build_samples  # noqa: E402
@@ -34,12 +34,13 @@ SERIES = {"smart_persistence": ("#2a78d6", (0, (4, 2))), "gbm_weather": ("#eb683
           "fusion": ("#1baf7a", "solid")}
 
 
-def cloudy_mask(data: Path, times: np.ndarray) -> np.ndarray:
-    """Map the official cloudy-test flag (per minute) onto sample times via timestamps."""
-    t = safe_load_object_npy(data / "times_test_nowcast.npy")
-    flag = np.load(data / "cloudy_test_nowcast.npy", allow_pickle=False)
-    lut = {np.datetime64(x, "s"): bool(f) for x, f in zip(t, flag)}
-    return np.array([lut.get(x, False) for x in times])
+def cloudy_mask(s) -> np.ndarray:
+    """Cloudy / variable conditions at issue time: k* < 0.8 or std(k*) over the last 15 min > 0.05.
+
+    (The `cloudy_test_nowcast.npy` flags shipped with the Hugging Face copy of SKIPP'D are all
+    False, so an explicit, reproducible definition is used instead.)
+    """
+    return (s.X["k_lag0"].values < 0.8) | (s.X["k_std"].values > 0.05)
 
 
 def plots(out: Path, s, preds: dict, rep_all: dict):
@@ -83,8 +84,8 @@ def plots(out: Path, s, preds: dict, rep_all: dict):
     ax.barh(names, vals, color="#2a78d6", height=0.55)
     ax.axvline(0, color="#52514e", lw=1)
     for i, v in enumerate(vals):
-        ax.text(v + (0.5 if v >= 0 else -0.5), i, f"{v:.1f}%", va="center",
-                ha="left" if v >= 0 else "right", color=INK)
+        # negative bars: label to the right of the zero line so it never collides with the y labels
+        ax.text(max(v, 0) + 0.5, i, f"{v:.1f}%", va="center", ha="left", color=INK)
     ax.set_xlabel("Forecast skill vs smart persistence (%)")
     ax.set_title("Skill on all test samples (higher is better)", loc="left", color=INK)
     for sp in ("top", "right", "left"):
@@ -116,7 +117,7 @@ def main():
         if n == "fusion":
             preds["fusion (camera offline)"] = m.predict(img, s, drop_image=True)
 
-    cloudy = cloudy_mask(data, s.times)
+    cloudy = cloudy_mask(s)
     rep_all = report(s.y, preds)
     rep_cloudy = report(s.y[cloudy], {k: v[cloudy] for k, v in preds.items()})
     res = {"n_test_samples": len(s), "n_cloudy": int(cloudy.sum()),
@@ -127,7 +128,7 @@ def main():
           f"Held-out test: {res['test_days']} days, {len(s)} samples (1-min issue times); "
           f"cloudy subset: {res['n_cloudy']} samples. Training: {meta['train_days']} days "
           f"(+{meta['val_days']} validation days).", "",
-          to_markdown(rep_all, "All test samples"), "", to_markdown(rep_cloudy, "Cloudy test days"), "",
+          to_markdown(rep_all, "All test samples"), "", to_markdown(rep_cloudy, "Cloudy / variable conditions (k* < 0.8 or 15-min k* std > 0.05)"), "",
           "Inference (CPU, ms/sample): " + ", ".join(f"{k} {v:.2f}" for k, v in timing.items())]
     (out / "results.md").write_text("\n".join(md))
     plots(out, s, preds, rep_all)
